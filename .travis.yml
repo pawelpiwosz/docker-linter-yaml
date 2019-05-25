@@ -1,0 +1,56 @@
+sudo: required
+dist: trusty
+language: bash
+
+stages:
+  - name: Script tests
+  - name: Build test
+  - name: Push container
+    if: branch = master && type = pull_request
+  - name: Check container
+    if: branch = master || type = pull_request
+
+
+services:
+  - docker
+
+install:
+  - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
+  - sudo apt-get -qq update
+  - sudo apt-get -t trusty-backports install shellcheck
+  - sudo pip install bashate
+
+jobs:
+  include:
+  - stage: Script tests
+    script:
+      - echo ${TRAVIS_COMMIT}
+      - echo ${TRAVIS_TAG}
+      - echo ${TRAVIS_BRANCH}
+      - echo ${TRAVIS_BUILD_NUMBER}
+      - echo ${TRAVIS_REPO_SLUG}
+      # test bash scripts
+      - shellcheck tests/*.sh
+      - bashate tests/*.sh
+
+  - stage: Build test
+    script:
+      - docker build -t lintyaml .
+      - bucketpath="$(pwd)/tests/bucket"
+      - ./tests/validate.sh
+
+  - stage: Push container
+    script:
+      - echo "push to repo"
+      - docker build -t lintyaml .
+      - docker images
+      - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+      - docker tag lintyaml ${DOCKER_USERNAME}/lintyaml
+      - docker push ${DOCKER_USERNAME}/lintyaml
+      - docker logout
+
+  - stage: Check container
+    script:
+      - docker pull ${DOCKER_USERNAME}/lintyaml
+      - bucketpath="$(pwd)/tests/bucket"
+      - docker run --rm -v ${bucketpath}:/bucket ${DOCKER_USERNAME}/lintyaml valid.yml
