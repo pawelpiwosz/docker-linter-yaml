@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-Validate your YAML files.
+Validate your YAML documents.
 
 ### Pull image
 
