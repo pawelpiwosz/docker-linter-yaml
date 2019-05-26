@@ -3,6 +3,9 @@
 #### Tests status
 
 [![Build Status](https://travis-ci.org/pawelpiwosz/docker-linter-yaml.svg?branch=master)](https://travis-ci.org/pawelpiwosz/docker-linter-yaml)
+[![](https://images.microbadger.com/badges/image/almerhor/lintyaml.svg)](https://microbadger.com/images/almerhor/lintyaml "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/version/almerhor/lintyaml.svg)](https://microbadger.com/images/almerhor/lintyaml "Get your own version badge on microbadger.com")
+[![](https://images.microbadger.com/badges/commit/almerhor/lintyaml.svg)](https://microbadger.com/images/almerhor/lintyaml "Get your own commit badge on microbadger.com")
 
 ### Synopsis
 
