@@ -1,5 +1,7 @@
 FROM python:3-alpine3.9
 
+LABEL maintainer="Pawel Piwosz <devops@pawelpiwosz.net>"
+
 # For Travis build
 ARG BUILD_DATE
 ARG VCS_REF
