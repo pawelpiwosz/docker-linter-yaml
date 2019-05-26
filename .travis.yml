@@ -5,6 +5,7 @@ language: bash
 stages:
   - name: Script tests
   - name: Build test
+    if: branch != master
   - name: Push container
     if: branch = master && type = pull_request
   - name: Check container
@@ -42,11 +43,15 @@ jobs:
   - stage: Push container
     script:
       - echo "push to repo"
-      - docker build -t lintyaml .
+      - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+      - VCS_REF=$(git rev-parse --short HEAD)
+      - VER=$(cat VERSION)
+      - docker build --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${VCS_REF} --build-arg VER=${VER} -t lintyaml .
       - docker images
       - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
       - docker tag lintyaml ${DOCKER_USERNAME}/lintyaml
       - docker push ${DOCKER_USERNAME}/lintyaml
+      - curl -X POST https://hooks.microbadger.com/images/almerhor/lintyaml/9PY46mkjJMOch-MtD7tSOh8M9Cs=
       - docker logout
 
   - stage: Check container
